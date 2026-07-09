@@ -1,0 +1,9 @@
+bin/
+obj/
+/packages/
+riderModule.iml
+/_ReSharper.Caches/
+## Contains env files
+NtfyDesktop.NET.sln.DotSettings.user 
+## End contains
+TestResults/

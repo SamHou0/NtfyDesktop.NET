@@ -1,0 +1,22 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtfyDesktop.NET", "NtfyDesktop.NET\NtfyDesktop.NET.csproj", "{E7BC192F-1FC5-4270-A545-9CEF69C83DDA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NtfyDesktop.NET.Test", "NtfyDesktop.NET.Test\NtfyDesktop.NET.Test.csproj", "{E7D7EF43-0336-453A-BF0C-88767CA7FF0D}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E7BC192F-1FC5-4270-A545-9CEF69C83DDA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7BC192F-1FC5-4270-A545-9CEF69C83DDA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7BC192F-1FC5-4270-A545-9CEF69C83DDA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7BC192F-1FC5-4270-A545-9CEF69C83DDA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7D7EF43-0336-453A-BF0C-88767CA7FF0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7D7EF43-0336-453A-BF0C-88767CA7FF0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7D7EF43-0336-453A-BF0C-88767CA7FF0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7D7EF43-0336-453A-BF0C-88767CA7FF0D}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
