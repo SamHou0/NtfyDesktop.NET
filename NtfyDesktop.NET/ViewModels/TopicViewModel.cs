@@ -16,10 +16,8 @@ public partial class TopicViewModel : ViewModelBase
     private NtfyTopic? _topicNow;
     private NtfyWsService? _topicNowService;
     private CancellationTokenSource _retryCts = new();
-    public NtfyTopic? TopicNow
-    {
-        get => _topicNow;
-    }
+    public NtfyTopic? TopicNow => _topicNow;
+
     [ObservableProperty]
     // Uri already contains topic name.
     public partial string? Uri { get; set; }

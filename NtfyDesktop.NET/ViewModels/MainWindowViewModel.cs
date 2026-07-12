@@ -39,9 +39,9 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (SelectedTopic != null)
         {
-            await SelectedTopic.CancelAllOperations();
             if (SelectedTopic.TopicNow != null)
                 FileHelper.DeleteTopic(SelectedTopic.TopicNow);
+            await SelectedTopic.CancelAllOperations();
             Topics.Remove(SelectedTopic);
         }
     }
