@@ -9,10 +9,12 @@ namespace NtfyDesktop.NET.Helper;
 
 public static class FileHelper
 {
+    public static readonly string AppDir = Environment.GetEnvironmentVariable("APPDIR")
+                                                ?? Environment.CurrentDirectory;
+    public static readonly string AppIcon = Path.Combine(AppDir,"NtfyDesktop.NET.png");
     private static readonly string ConfigPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "NtfyDesktop.NET");
-
     private static void CheckDirectory()
     {
         if (!Directory.Exists(ConfigPath))

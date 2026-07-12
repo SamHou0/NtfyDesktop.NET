@@ -6,7 +6,7 @@
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="NtfyDesktop.NET.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
-        Icon="/Assets/avalonia-logo.ico"
+        Icon="/Assets/Ntfy.png"
         Title="NtfyDesktop.NET"
         Closing="Window_OnClosing"
         FontSize="20"
@@ -51,8 +51,9 @@
             <TextBox Grid.Row="2" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Token}"
                      PlaceholderText="Enter you auth token">
             </TextBox>
-            <TextBlock Grid.Row="3" Text="{Binding Id}" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <TextBlock Grid.Row="3" Text="{Binding Id}" TextAlignment="Center" VerticalAlignment="Center">Id</TextBlock>
             <Button Grid.Row="4" HorizontalAlignment="Center" Command="{Binding ApplyEdit}"
+                    VerticalAlignment="Center"
                     IsEnabled="{Binding !IsTestingConnection}">
                 Save + Apply Settings
             </Button>

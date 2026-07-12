@@ -81,7 +81,7 @@ public partial class TopicViewModel : ViewModelBase
     {
         if (_topicNow == null) return;
         StatusMessage = "Connecting...";
-        
+
         try
         {
             await ResetWsService();
@@ -112,7 +112,7 @@ public partial class TopicViewModel : ViewModelBase
         _retryCts.Token.ThrowIfCancellationRequested();
         _topicNowService = new NtfyWsService(_topicNow.Uri, _topicNow.Token);
         _topicNowService.OnMessageReceived += OnMessageReceived;
-        // _topicNowService.OnConnectionError += NtfyWsServiceOnConnectionError;
+        _topicNowService.OnConnectionError += NtfyWsServiceOnConnectionError;
         _retryCts = new();
     }
 
@@ -149,43 +149,44 @@ public partial class TopicViewModel : ViewModelBase
         await CancelWsService();
     }
 
-    // private async Task NtfyWsServiceOnConnectionError()
-    // {
-    //     Console.WriteLine($"[Info] {_topicNow?.DisplayName} Connection Failed. Wait 5 seconds and reconnect...");
-    //     uint retryTimes = 0;
-    //     do
-    //     {
-    //         StatusMessage = $"[Retry {retryTimes}] Connection error. Reconnecting in 5 seconds...";
-    //         try
-    //         {
-    //             await Task.Delay(5000, _retryCts.Token);
-    //         }
-    //         catch (OperationCanceledException)
-    //         {
-    //             return;
-    //         }
-    //
-    //         try
-    //         {
-    //             await ResetWsService();
-    //             StatusMessage = $"Reconnecting...";
-    //             await _topicNowService!.ConnectAsync();
-    //             Console.WriteLine($"[Info] {_topicNow?.DisplayName} Reconnect Success!");
-    //             _ = _topicNowService.StartReceivingAsync();
-    //         }
-    //         catch
-    //         {
-    //             Console.WriteLine(
-    //                 $"[Error] Still cannot connect. Wait for next retry {retryTimes + 1}.");
-    //         }
-    //         finally
-    //         {
-    //             retryTimes++;
-    //         }
-    //     } while (_topicNowService!.State != WebSocketState.Open);
-    //
-    //     StatusMessage = "Connected and Receiving...!";
-    // }
+    private async Task NtfyWsServiceOnConnectionError()
+    {
+        Console.WriteLine($"[Info] {_topicNow?.DisplayName} Connection Failed. Wait 5 seconds and reconnect...");
+        uint retryTimes = 0;
+        do
+        {
+            StatusMessage = $"[Retry {retryTimes}] Connection error. Reconnecting in 5 seconds...";
+            try
+            {
+                await Task.Delay(5000, _retryCts.Token);
+            }
+            catch (OperationCanceledException)
+            {
+                Console.WriteLine($"[Info] {_topicNow?.DisplayName} Reconnecting Cancelled...");
+                return;
+            }
+
+            try
+            {
+                await ResetWsService();
+                StatusMessage = $"Reconnecting...";
+                await _topicNowService!.ConnectAsync();
+                Console.WriteLine($"[Info] {_topicNow?.DisplayName} Reconnect Success!");
+                _ = _topicNowService.StartReceivingAsync();
+            }
+            catch
+            {
+                Console.WriteLine(
+                    $"[Error] Still cannot connect. Wait for next retry {retryTimes + 1}.");
+            }
+            finally
+            {
+                retryTimes++;
+            }
+        } while (_topicNowService!.State != WebSocketState.Open);
+
+        StatusMessage = "Connected and Receiving...!";
+    }
 
     private static void OnMessageReceived(string message)
     {

@@ -2,12 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              x:Class="NtfyDesktop.NET.App"
              xmlns:local="using:NtfyDesktop.NET"
-             xmlns:semi="https://irihi.tech/semi"
+             xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
     <TrayIcon.Icons>
         <TrayIcons>
-            <TrayIcon Icon="/Assets/avalonia-logo.ico"
+            <TrayIcon Icon="/Assets/Ntfy.png"
                       ToolTipText="NtfyDesktop.NET Running..."
                       Clicked="Show_OnClick">
                 <TrayIcon.Menu>
@@ -23,6 +23,6 @@
         <local:ViewLocator />
     </Application.DataTemplates>
     <Application.Styles>
-        <semi:SemiTheme Locale="en-US" />
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="LightGreen"/>
     </Application.Styles>
 </Application>
