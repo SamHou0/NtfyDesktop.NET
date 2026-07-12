@@ -1,5 +1,6 @@
 using System;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.Messaging;
@@ -10,6 +11,12 @@ namespace NtfyDesktop.NET.Views;
 
 public partial class MainWindow : Window
 {
+    /// <summary>
+    /// This describes whether a hidden request is in progress
+    /// Uses when initializing the window (Auto hide).
+    /// </summary>
+    private bool _isPendingHidden = false;
+
     public MainWindow()
     {
         WeakReferenceMessenger.Default.Register<ChangeWindowStatusMessage>(this,
@@ -20,23 +27,25 @@ public partial class MainWindow : Window
 
     private void WindowStatusChange(object recipient, ChangeWindowStatusMessage message)
     {
-        if (message.Status == WindowStatus.Hidden)
+        switch (message.Status)
         {
-            Hide();
-        }
-        else if (message.Status == WindowStatus.Normal)
-        {
-            Show();
+            case WindowStatus.Hidden:
+                Hide();
+                break;
+            case WindowStatus.Normal:
+                Show();
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 
-    private void ExtractIcon()
+    private static void ExtractIcon()
     {
         try
         {
             var image = new Bitmap(AssetLoader.Open(new Uri("avares://NtfyDesktop.NET/Assets/Ntfy.png")));
             FileHelper.SaveImage(image, FileHelper.AppIcon);
-
         }
         catch (Exception ex)
         {
@@ -49,6 +58,14 @@ public partial class MainWindow : Window
         if (!e.IsProgrammatic)
         {
             e.Cancel = true;
+            Hide();
+        }
+    }
+
+    private void Control_OnLoaded(object? sender, RoutedEventArgs e)
+    {
+        if (_isPendingHidden)
+        {
             Hide();
         }
     }

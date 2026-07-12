@@ -4,9 +4,11 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core;
 using Avalonia.Data.Core.Plugins;
 using System.Linq;
+using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using NtfyDesktop.NET.Helper;
 using NtfyDesktop.NET.ViewModels;
 using NtfyDesktop.NET.Views;
 
@@ -14,6 +16,8 @@ namespace NtfyDesktop.NET;
 
 public partial class App : Application
 {
+    private MainWindow? _mainWindow;
+
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
@@ -23,12 +27,22 @@ public partial class App : Application
     {
         if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow = new MainWindow
+            bool isFirstRun = !FileHelper.CheckDirectory();
+            desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
+            _mainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel(),
+                DataContext = new MainWindowViewModel(isFirstRun),
             };
+            if (isFirstRun)
+            {
+                desktop.MainWindow = _mainWindow;
+            }
+            else
+            {
+                NotifyHelper.SendNotificationDbus("NtfyDesktop is running background!");
+            }
         }
-        
+
         base.OnFrameworkInitializationCompleted();
     }
 
@@ -36,13 +50,16 @@ public partial class App : Application
     {
         try
         {
-            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
-                && desktop.MainWindow is MainWindow window)
+            if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                MainWindowViewModel vm = window.DataContext as MainWindowViewModel ??
+                MainWindow? mainWindow = null;
+                mainWindow ??= desktop.MainWindow as MainWindow;
+                mainWindow ??= _mainWindow;
+                MainWindowViewModel vm = mainWindow?.DataContext as MainWindowViewModel ??
                                          throw new NullReferenceException();
                 await vm.CancelOperation();
-                window.Close();
+                mainWindow.Close();
+                desktop.Shutdown();
             }
         }
         catch (Exception ex)
@@ -50,18 +67,18 @@ public partial class App : Application
             Console.WriteLine("[Error] Failed to disconnect window: " + ex);
             Environment.Exit(1);
         }
-        finally
-        {
-            Environment.Exit(0);
-        }
+        // finally
+        // {
+        //     Environment.Exit(0);
+        // }
     }
 
     private void Show_OnClick(object? sender, EventArgs e)
     {
-        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop
-            && desktop.MainWindow is MainWindow window)
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
-            desktop.MainWindow.Show();
+            desktop.MainWindow ??= _mainWindow;
+            desktop.MainWindow!.Show();
         }
     }
 }

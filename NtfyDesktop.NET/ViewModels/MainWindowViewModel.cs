@@ -24,9 +24,9 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] public partial bool IsItemsEditing { get; set; } = false;
     [ObservableProperty] public partial bool IsFirstRun { get; set; } = false;
 
-    public MainWindowViewModel()
+    public MainWindowViewModel(bool isFirstRun)
     {
-        IsFirstRun = !FileHelper.CheckDirectory();
+        IsFirstRun = isFirstRun;
         if (!IsFirstRun)
         {
             _ = ReadTopics();

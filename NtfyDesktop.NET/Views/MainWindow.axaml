@@ -10,6 +10,7 @@
         Icon="/Assets/Ntfy.png"
         Title="NtfyDesktop.NET"
         Closing="Window_OnClosing"
+        Loaded="Control_OnLoaded"
         FontSize="20"
         Width="800" Height="600">
     <Window.Resources>
