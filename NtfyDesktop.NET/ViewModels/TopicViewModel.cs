@@ -197,8 +197,8 @@ public partial class TopicViewModel : ViewModelBase
             if (ntfyMessage.Event == "message")
             {
                 NotifyHelper.SendNotificationDbus(
-                    ntfyMessage.Message ?? throw new ArgumentNullException(nameof(ntfyMessage.Message),
-                        ntfyMessage.Title ?? "NtfyDesktop.NET"));
+                    ntfyMessage.Message ?? throw new ArgumentNullException(nameof(ntfyMessage.Message)),
+                        ntfyMessage.Title ?? ntfyMessage.Topic);
             }
         }
         catch (Exception ex)

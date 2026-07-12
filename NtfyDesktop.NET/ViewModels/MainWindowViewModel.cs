@@ -9,7 +9,9 @@ using Avalonia;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using NtfyDesktop.NET.Helper;
+using NtfyDesktop.NET.Message;
 using NtfyDesktop.NET.Models;
 using NtfyDesktop.NET.Service;
 
@@ -19,12 +21,20 @@ public partial class MainWindowViewModel : ViewModelBase
 {
     [ObservableProperty] public partial ObservableCollection<TopicViewModel> Topics { get; set; } = [];
     [ObservableProperty] public partial TopicViewModel? SelectedTopic { get; set; }
-    [ObservableProperty] public partial string? DisplayMessage { get; set; }
     [ObservableProperty] public partial bool IsItemsEditing { get; set; } = false;
+    [ObservableProperty] public partial bool IsFirstRun { get; set; } = false;
 
     public MainWindowViewModel()
     {
-        _ = ReadTopics();
+        IsFirstRun = !FileHelper.CheckDirectory();
+        if (!IsFirstRun)
+        {
+            _ = ReadTopics();
+        }
+        else
+        {
+            // TODO: Take a ui tour.
+        }
     }
 
     [RelayCommand]

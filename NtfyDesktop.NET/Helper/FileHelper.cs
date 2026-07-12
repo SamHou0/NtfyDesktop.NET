@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
 using NtfyDesktop.NET.Models;
 
 namespace NtfyDesktop.NET.Helper;
@@ -10,23 +12,35 @@ namespace NtfyDesktop.NET.Helper;
 public static class FileHelper
 {
     public static readonly string AppDir = Environment.GetEnvironmentVariable("APPDIR")
-                                                ?? Environment.CurrentDirectory;
-    public static readonly string AppIcon = Path.Combine(AppDir,"NtfyDesktop.NET.png");
+                                           ?? Environment.CurrentDirectory;
+
+    public static readonly string AppIcon = Path.Combine(AppDir, "Ntfy.png");
+
     private static readonly string ConfigPath = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "NtfyDesktop.NET");
-    private static void CheckDirectory()
+
+    /// <summary>
+    /// Check whether config dir exists. Will automatically create if not exist.
+    /// </summary>
+    /// <returns>Whether the dir exist before the call.</returns>
+    public static bool CheckDirectory()
     {
         if (!Directory.Exists(ConfigPath))
         {
             Directory.CreateDirectory(ConfigPath);
+            return false;
+        }
+        else
+        {
+            return true;
         }
     }
 
     public static async Task SaveTopic(NtfyTopic topic)
     {
         CheckDirectory();
-        await using StreamWriter writer = new(Path.Combine(ConfigPath,topic.Id+ ".json"));
+        await using StreamWriter writer = new(Path.Combine(ConfigPath, topic.Id + ".json"));
         await writer.WriteAsync(JsonSerializer.Serialize(topic));
     }
 
@@ -44,9 +58,18 @@ public static class FileHelper
 
         return topics;
     }
+
     public static void DeleteTopic(NtfyTopic topic)
     {
         CheckDirectory();
-        File.Delete(Path.Combine(ConfigPath,topic.Id+ ".json"));
+        File.Delete(Path.Combine(ConfigPath, topic.Id + ".json"));
+    }
+
+    public static void SaveImage(Bitmap image, string fileName)
+    {
+        image.Save(fileName, new PngBitmapEncoderOptions()
+        {
+            CompressionLevel = CompressionLevel.NoCompression
+        });
     }
 }

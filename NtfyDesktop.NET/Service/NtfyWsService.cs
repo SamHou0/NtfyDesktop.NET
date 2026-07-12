@@ -79,6 +79,7 @@ public partial class NtfyWsService : IDisposable
                 } while (!result.EndOfMessage);
 
                 string message = Encoding.UTF8.GetString(ms.ToArray());
+                Console.WriteLine($"[Debug] {nameof(StartReceivingAsync)} received: {message}");
                 OnMessageReceived?.Invoke(message);
             }
         }

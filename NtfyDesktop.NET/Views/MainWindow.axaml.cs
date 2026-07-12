@@ -1,4 +1,10 @@
+using System;
 using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using Avalonia.Platform;
+using CommunityToolkit.Mvvm.Messaging;
+using NtfyDesktop.NET.Helper;
+using NtfyDesktop.NET.Message;
 
 namespace NtfyDesktop.NET.Views;
 
@@ -6,7 +12,36 @@ public partial class MainWindow : Window
 {
     public MainWindow()
     {
+        WeakReferenceMessenger.Default.Register<ChangeWindowStatusMessage>(this,
+            WindowStatusChange);
         InitializeComponent();
+        ExtractIcon();
+    }
+
+    private void WindowStatusChange(object recipient, ChangeWindowStatusMessage message)
+    {
+        if (message.Status == WindowStatus.Hidden)
+        {
+            Hide();
+        }
+        else if (message.Status == WindowStatus.Normal)
+        {
+            Show();
+        }
+    }
+
+    private void ExtractIcon()
+    {
+        try
+        {
+            var image = new Bitmap(AssetLoader.Open(new Uri("avares://NtfyDesktop.NET/Assets/Ntfy.png")));
+            FileHelper.SaveImage(image, FileHelper.AppIcon);
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[Warning] Failed to extract icon Ntfy.png. " + ex.Message);
+        }
     }
 
     private void Window_OnClosing(object? sender, WindowClosingEventArgs e)

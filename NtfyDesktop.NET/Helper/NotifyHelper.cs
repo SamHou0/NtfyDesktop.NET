@@ -8,15 +8,16 @@ public static class NotifyHelper
 {
     public static void SendNotificationDbus(string message, string title = "Ntfy Desktop")
     {
-        string[] args =
-        [
-            title,
-            message
-        ];
-        // Generate arg string
-        string argString = "\"" +
-                           string.Join("\" \"", args)
-                           + "\"";
-        Process.Start("notify-send", argString);
+        // TODO: Handle bad string format.
+        Process.Start("notify-send",
+            string.Concat(
+                "--app-name=NtfyDesktop.NET ",
+                "--icon=\"",
+                FileHelper.AppIcon,
+                "\" \"",
+                title, "\" \"",
+                message, "\""
+            )
+        );
     }
 }
