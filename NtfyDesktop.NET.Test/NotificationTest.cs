@@ -8,6 +8,6 @@ public class NotificationTest
     public void TestNotificationDbus()
     {
         // This show a message on Linux Desktops.
-        NotifyHelper.SendNotificationDbus("Test","A test message");
+        NotifyHelper.SendNotificationDbus("Test message","test");
     }
 }

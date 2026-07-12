@@ -6,9 +6,9 @@ namespace NtfyDesktop.NET.Helper;
 
 public static class NotifyHelper
 {
-    public static void SendNotificationDbus(string title, string message)
+    public static void SendNotificationDbus(string message, string title = "Ntfy Desktop")
     {
-        string[] args = 
+        string[] args =
         [
             title,
             message

@@ -1,0 +1,50 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text.Json;
+using System.Threading.Tasks;
+using NtfyDesktop.NET.Models;
+
+namespace NtfyDesktop.NET.Helper;
+
+public static class FileHelper
+{
+    private static readonly string ConfigPath = Path.Combine(
+        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+        "NtfyDesktop.NET");
+
+    private static void CheckDirectory()
+    {
+        if (!Directory.Exists(ConfigPath))
+        {
+            Directory.CreateDirectory(ConfigPath);
+        }
+    }
+
+    public static async Task SaveTopic(NtfyTopic topic)
+    {
+        CheckDirectory();
+        await using StreamWriter writer = new(Path.Combine(ConfigPath,topic.Id+ ".json"));
+        await writer.WriteAsync(JsonSerializer.Serialize(topic));
+    }
+
+    public static async Task<List<NtfyTopic>> LoadTopics()
+    {
+        CheckDirectory();
+        List<NtfyTopic> topics = [];
+        foreach (var file in Directory.GetFiles(ConfigPath))
+        {
+            using StreamReader reader = new(file);
+            var topic = JsonSerializer.Deserialize<NtfyTopic>(await reader.ReadToEndAsync());
+            if (topic != null)
+                topics.Add(topic);
+        }
+
+        return topics;
+    }
+    public static void DeleteTopic(NtfyTopic topic)
+    {
+        CheckDirectory();
+        File.Delete(Path.Combine(ConfigPath,topic.Id+ ".json"));
+    }
+}

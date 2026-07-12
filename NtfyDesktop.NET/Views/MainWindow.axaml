@@ -3,24 +3,81 @@
         xmlns:vm="using:NtfyDesktop.NET.ViewModels"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
         x:Class="NtfyDesktop.NET.Views.MainWindow"
         x:DataType="vm:MainWindowViewModel"
         Icon="/Assets/avalonia-logo.ico"
         Title="NtfyDesktop.NET"
-        Closing="Window_OnClosing">
+        Closing="Window_OnClosing"
+        FontSize="20"
+        Width="800" Height="600">
 
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainWindowViewModel/>
+        <vm:MainWindowViewModel />
     </Design.DataContext>
-    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-        <TextBox Text="{Binding UriString}" IsEnabled="{Binding !IsConnected}"></TextBox>
-        <TextBox Text="{Binding AuthToken}" IsEnabled="{Binding !IsConnected}"></TextBox>
-        <TextBlock Text="{Binding DisplayMessage}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button Command="{Binding ApplySettings}">Apply Settings</Button>
-        <Button Command="{Binding Close}" CommandParameter="{Binding $parent[Window]}">Exit</Button>
-    </StackPanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="2*"></ColumnDefinition>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <ListBox Margin="20" CornerRadius="5" ItemsSource="{Binding Topics}"
+                 DisplayMemberBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedTopic}"
+                 IsEnabled="{Binding !IsItemsEditing}">
+        </ListBox>
+        <GridSplitter Grid.Row="0" Grid.Column="1" Background="GreenYellow" Width="1" Opacity="0.2"></GridSplitter>
+        <Grid Grid.Row="0" Grid.Column="2"
+              DataContext="{Binding SelectedTopic}" Margin="20 0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="3*" />
+            </Grid.RowDefinitions>
+            <TextBox Grid.Row="0" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding DisplayName}"
+                     PlaceholderText="Enter a custom name here">
+            </TextBox>
+            <TextBox Grid.Row="1" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Uri}"
+                     PlaceholderText="Enter wss://ntfy.sh/topic/ws url">
+            </TextBox>
+            <TextBox Grid.Row="2" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Token}"
+                     PlaceholderText="Enter you auth token">
+            </TextBox>
+            <TextBlock Grid.Row="3" Text="{Binding Id}" TextAlignment="Center" VerticalAlignment="Center"></TextBlock>
+            <Button Grid.Row="4" HorizontalAlignment="Center" Command="{Binding ApplyEdit}"
+                    IsEnabled="{Binding !IsTestingConnection}">
+                Save + Apply Settings
+            </Button>
+            <TextBlock Grid.Row="5" Text="{Binding StatusMessage}" TextWrapping="Wrap" TextAlignment="Center">
+                Status Message will show here. Create a topic and choose it to edit.
+            </TextBlock>
+        </Grid>
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{Binding DisplayMessage}" HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
+        <Grid Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" HorizontalAlignment="Stretch"
+              VerticalAlignment="Stretch" Margin="20 20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0" Command="{Binding AddTopic}" HorizontalAlignment="Center"
+                    IsEnabled="{Binding !IsItemsEditing}">
+                Add Topic
+            </Button>
+            <Button Grid.Column="1" Command="{Binding RemoveTopic}" HorizontalAlignment="Center"
+                    IsEnabled="{Binding !IsItemsEditing}">
+                Remove Topic
+            </Button>
+        </Grid>
+
+    </Grid>
 
 </Window>
