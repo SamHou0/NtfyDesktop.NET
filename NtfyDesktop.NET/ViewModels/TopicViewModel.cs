@@ -31,6 +31,7 @@ public partial class TopicViewModel : ViewModelBase
     [ObservableProperty] public partial string? Token { get; set; }
     [ObservableProperty] public partial string StatusMessage { get; set; } = "Not initialized";
     [ObservableProperty] public partial bool IsTestingConnection { get; set; } = false;
+    [ObservableProperty] public partial bool IsConnected { get; set; } = false;
 
     /// <summary>
     /// Default model. Generate fresh model.
@@ -61,7 +62,7 @@ public partial class TopicViewModel : ViewModelBase
             StatusMessage = "Fill in the textbox first.";
             return;
         }
-
+         
         IsTestingConnection = true;
         _topicNow = new()
         {
@@ -81,6 +82,7 @@ public partial class TopicViewModel : ViewModelBase
     {
         if (_topicNow == null) return;
         StatusMessage = "Connecting...";
+        IsConnected = false;
 
         try
         {
@@ -89,6 +91,7 @@ public partial class TopicViewModel : ViewModelBase
             await _topicNowService!.ConnectAsync();
             _ = _topicNowService!.StartReceivingAsync();
             StatusMessage = "Connected and Receiving...!";
+            IsConnected = true;
         }
         catch (Exception ex)
         {
@@ -152,6 +155,7 @@ public partial class TopicViewModel : ViewModelBase
     private async Task NtfyWsServiceOnConnectionError()
     {
         Console.WriteLine($"[Info] {_topicNow?.DisplayName} Connection Failed. Wait 5 seconds and reconnect...");
+        IsConnected = false;
         uint retryTimes = 0;
         do
         {
@@ -186,6 +190,7 @@ public partial class TopicViewModel : ViewModelBase
         } while (_topicNowService!.State != WebSocketState.Open);
 
         StatusMessage = "Connected and Receiving...!";
+        IsConnected = true;
     }
 
     private static void OnMessageReceived(string message)

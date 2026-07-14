@@ -15,6 +15,7 @@
         Width="800" Height="600">
     <Window.Resources>
         <converter:FirstRunToMessageConverter x:Key="FirstRunToMessage" />
+        <converter:BoolToBrushConverter x:Key="BoolToBrush" />
     </Window.Resources>
     <Design.DataContext>
         <!-- This only sets the DataContext for the previewer in an IDE,
@@ -32,8 +33,14 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
         <ListBox Margin="20" CornerRadius="5" ItemsSource="{Binding Topics}"
-                 DisplayMemberBinding="{Binding DisplayName}" SelectedItem="{Binding SelectedTopic}"
+                 SelectedItem="{Binding SelectedTopic}"
                  IsEnabled="{Binding !IsItemsEditing}">
+            <ListBox.ItemTemplate>
+                <DataTemplate x:DataType="vm:TopicViewModel">
+                    <TextBlock Text="{Binding DisplayName}"
+                               Foreground="{Binding IsConnected, Converter={StaticResource BoolToBrush}}" />
+                </DataTemplate>
+            </ListBox.ItemTemplate>
         </ListBox>
         <GridSplitter Grid.Row="0" Grid.Column="1" Background="GreenYellow" Width="1" Opacity="0.2"></GridSplitter>
         <Grid Grid.Row="0" Grid.Column="2"
