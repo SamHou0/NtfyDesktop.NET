@@ -3,6 +3,7 @@
              x:Class="NtfyDesktop.NET.App"
              xmlns:local="using:NtfyDesktop.NET"
              xmlns:themes="clr-namespace:Material.Styles.Themes;assembly=Material.Styles"
+             xmlns:avalonia="clr-namespace:Material.Icons.Avalonia;assembly=Material.Icons.Avalonia"
              RequestedThemeVariant="Default">
     <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
     <TrayIcon.Icons>
@@ -24,5 +25,6 @@
     </Application.DataTemplates>
     <Application.Styles>
         <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="LightGreen"/>
+        <avalonia:MaterialIconStyles />
     </Application.Styles>
 </Application>
