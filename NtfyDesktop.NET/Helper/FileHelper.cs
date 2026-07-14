@@ -59,10 +59,24 @@ public static class FileHelper
         return topics;
     }
 
+    /// <summary>
+    /// Delete topic by sending a topic data.
+    /// </summary>
+    /// <param name="topic"></param>
     public static void DeleteTopic(NtfyTopic topic)
     {
         CheckDirectory();
         File.Delete(Path.Combine(ConfigPath, topic.Id + ".json"));
+    }
+
+    /// <summary>
+    /// Delete topic by directly specify an id.
+    /// </summary>
+    /// <param name="id"></param>
+    public static void DeleteTopic(string id)
+    {
+        CheckDirectory();
+        File.Delete(Path.Combine(ConfigPath, id + ".json"));
     }
 
     public static void SaveImage(Bitmap image, string fileName)

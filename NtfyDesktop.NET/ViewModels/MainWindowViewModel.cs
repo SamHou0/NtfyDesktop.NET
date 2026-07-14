@@ -49,8 +49,20 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (SelectedTopic != null)
         {
-            if (SelectedTopic.TopicNow != null)
-                FileHelper.DeleteTopic(SelectedTopic.TopicNow);
+            try
+            {
+                if (SelectedTopic.TopicNow != null)
+                    FileHelper.DeleteTopic(SelectedTopic.TopicNow);
+                else // When user save, but test failed.
+                {
+                    FileHelper.DeleteTopic(SelectedTopic.Id);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("[Error] Failed to remove and delete topic file: " + ex);
+            }
+
             await SelectedTopic.CancelAllOperations();
             Topics.Remove(SelectedTopic);
         }
