@@ -62,6 +62,8 @@ public partial class TopicViewModel : ViewModelBase
             StatusMessage = "Fill in the textbox first.";
             return;
         }
+        // First cancel retry and old service!
+        await CancelAllOperations();
          
         IsTestingConnection = true;
         _topicNow = new()
@@ -112,11 +114,9 @@ public partial class TopicViewModel : ViewModelBase
 
         if (_topicNow == null)
             throw new InvalidOperationException("No topic has been set.");
-        _retryCts.Token.ThrowIfCancellationRequested();
         _topicNowService = new NtfyWsService(_topicNow.Uri, _topicNow.Token);
         _topicNowService.OnMessageReceived += OnMessageReceived;
         _topicNowService.OnConnectionError += NtfyWsServiceOnConnectionError;
-        _retryCts = new();
     }
 
     /// <summary>
