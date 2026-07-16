@@ -40,7 +40,11 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public void AddTopic()
     {
-        TopicViewModel vm = new(RemoveTopic) { DisplayName = "New Topic" };
+        TopicViewModel vm = new(RemoveTopic)
+        {
+            DisplayName = "New Topic",
+            
+        };
         Topics.Add(vm);
     }
     /// <summary>

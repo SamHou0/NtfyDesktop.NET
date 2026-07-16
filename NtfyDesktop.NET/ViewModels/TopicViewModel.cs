@@ -15,20 +15,32 @@ public partial class TopicViewModel : ViewModelBase
 {
     private NtfyTopic? _topicNow;
     private NtfyWsService? _topicNowService;
+
     private CancellationTokenSource _retryCts = new();
+
     // delete self and any config 
     public event Action<TopicViewModel>? DeleteRequested;
 
+    /// <summary>
+    /// Server uri w/o topic name
+    /// </summary>
     [ObservableProperty]
-    // Uri already contains topic name.
-    public partial string? Uri { get; set; }
+    public partial string? BaseUri { get; set; }
+
+    /// <summary>
+    /// The topic real topic name in ntfy systems, bind to ui.
+    /// </summary>
+    [ObservableProperty]
+    public partial string? TopicName { get; set; }
 
     [ObservableProperty]
     // Only a name created by users.
     public partial string DisplayName { get; set; } = "Untitled";
 
+    // Generated Guid
     [ObservableProperty] public partial string Id { get; set; } = Guid.NewGuid().ToString();
 
+    // The auth token
     [ObservableProperty] public partial string? Token { get; set; }
     [ObservableProperty] public partial string StatusMessage { get; set; } = "Not initialized";
     [ObservableProperty] public partial bool IsTestingConnection { get; set; } = false;
@@ -46,10 +58,12 @@ public partial class TopicViewModel : ViewModelBase
     /// Create model and load topic. Best for reading from disk.
     /// </summary>
     /// <param name="topic"></param>
-    public TopicViewModel(NtfyTopic topic,Action<TopicViewModel> deleteRequested)
+    /// <param name="deleteRequested"></param>
+    public TopicViewModel(NtfyTopic topic, Action<TopicViewModel> deleteRequested)
     {
         _topicNow = topic;
-        this.Uri = topic.Uri.AbsoluteUri;
+        this.BaseUri = topic.BaseUri;
+        this.TopicName = topic.TopicName;
         this.DisplayName = topic.DisplayName;
         this.Token = topic.Token;
         this.Id = topic.Id;
@@ -74,6 +88,7 @@ public partial class TopicViewModel : ViewModelBase
         {
             Console.WriteLine("[Error] Failed to remove and delete topic file: " + ex);
         }
+
         await CancelAllOperations();
         // Notify parent
         DeleteRequested?.Invoke(this);
@@ -82,20 +97,23 @@ public partial class TopicViewModel : ViewModelBase
     [RelayCommand]
     public async Task ApplyEdit()
     {
-        if (string.IsNullOrEmpty(Uri) || string.IsNullOrEmpty(DisplayName) || string.IsNullOrEmpty(Token))
+        if (string.IsNullOrEmpty(BaseUri) || string.IsNullOrEmpty(TopicName) || string.IsNullOrEmpty(DisplayName) ||
+            string.IsNullOrEmpty(Token))
         {
             StatusMessage = "Fill in the textbox first.";
             return;
         }
+
         // First cancel retry and old service!
         await CancelAllOperations();
-         
+
         IsTestingConnection = true;
         _topicNow = new()
         {
             Id = Id,
             DisplayName = DisplayName,
-            Uri = new(Uri),
+            BaseUri = BaseUri,
+            TopicName = TopicName,
             Token = new(Token),
         };
         await SaveAndConnect();
@@ -139,7 +157,7 @@ public partial class TopicViewModel : ViewModelBase
 
         if (_topicNow == null)
             throw new InvalidOperationException("No topic has been set.");
-        _topicNowService = new NtfyWsService(_topicNow.Uri, _topicNow.Token);
+        _topicNowService = new NtfyWsService(_topicNow.ToUri(), _topicNow.Token);
         _topicNowService.OnMessageReceived += OnMessageReceived;
         _topicNowService.OnConnectionError += NtfyWsServiceOnConnectionError;
     }
@@ -228,7 +246,7 @@ public partial class TopicViewModel : ViewModelBase
             {
                 NotifyHelper.SendNotificationDbus(
                     ntfyMessage.Message ?? throw new ArgumentNullException(nameof(ntfyMessage.Message)),
-                        ntfyMessage.Title ?? ntfyMessage.Topic);
+                    ntfyMessage.Title ?? ntfyMessage.Topic);
             }
         }
         catch (Exception ex)

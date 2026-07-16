@@ -53,6 +53,8 @@ public partial class MainWindow : Window
         if (!e.IsProgrammatic)
         {
             e.Cancel = true;
+            NotifyHelper.SendNotificationDbus(
+                "NtfyDesktop.NET is hiding into background! Your message receiving continues...");
             Hide();
         }
     }

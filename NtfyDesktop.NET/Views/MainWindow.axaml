@@ -64,31 +64,32 @@
             </Grid>
         </ScrollViewer>
         <GridSplitter Grid.Row="0" Grid.Column="1" Background="Black" Width="4" Opacity="0.2"></GridSplitter>
+        <!-- Panel on the right -->
         <Grid Grid.Row="0" Grid.Column="2"
-              DataContext="{Binding SelectedTopic}" Margin="20 0" RowDefinitions="*,*,*,*,*,3*">
+              DataContext="{Binding SelectedTopic}" Margin="20 0" RowDefinitions="*,*,*,*,*,*,3*">
             <TextBox Grid.Row="0" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding DisplayName}"
-                     PlaceholderText="Enter a custom name here">
+                     PlaceholderText="A custom name here, can be anything">
             </TextBox>
-            <TextBox Grid.Row="1" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Uri}"
-                     PlaceholderText="Enter wss://ntfy.sh/topic/ws url">
+            <TextBox Grid.Row="1" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding BaseUri}"
+                     PlaceholderText="Server url, e.g. ntfy.sh">
             </TextBox>
-            <TextBox Grid.Row="2" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Token}"
+            <TextBox Grid.Row="2" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding TopicName}"
+                     PlaceholderText="Topic name on server, e.g. mytopic">
+            </TextBox>
+
+            <TextBox Grid.Row="3" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Token}"
                      PlaceholderText="Enter you auth token">
             </TextBox>
-            <TextBlock Grid.Row="3" Text="{Binding Id}" TextAlignment="Center" VerticalAlignment="Center">Id</TextBlock>
-            <Button Grid.Row="4" HorizontalAlignment="Center" Command="{Binding ApplyEdit}"
+            <TextBlock Grid.Row="4" Text="{Binding Id}" TextAlignment="Center" VerticalAlignment="Center">Id</TextBlock>
+            <Button Grid.Row="5" HorizontalAlignment="Center" Command="{Binding ApplyEdit}"
                     VerticalAlignment="Center"
                     IsEnabled="{Binding !IsTestingConnection}">
                 Save + Apply Settings
             </Button>
-            <TextBlock Grid.Row="5" Text="{Binding StatusMessage}" TextWrapping="Wrap" TextAlignment="Center">
-                Status Message will show here.
+            <TextBlock Grid.Row="6" Text="{Binding StatusMessage}" TextWrapping="Wrap" TextAlignment="Center">
+                ⬅️ Choose / Create a topic first
             </TextBlock>
         </Grid>
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0"
-                   Text="{Binding IsFirstRun,Converter={StaticResource FirstRunToMessage}}"
-                   HorizontalAlignment="Center"
-                   VerticalAlignment="Center" />
 
     </Grid>
 
