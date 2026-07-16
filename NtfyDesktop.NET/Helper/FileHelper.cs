@@ -11,12 +11,11 @@ namespace NtfyDesktop.NET.Helper;
 
 public static class FileHelper
 {
-    public static readonly string AppDir = Environment.GetEnvironmentVariable("APPDIR")
-                                           ?? Environment.CurrentDirectory;
+    public static readonly string LocalDir = Path.Combine(Environment.GetFolderPath
+        (Environment.SpecialFolder.LocalApplicationData), "NtfyDesktop.NET");
+    public static readonly string AppIcon = Path.Combine(LocalDir, "Ntfy.png");
 
-    public static readonly string AppIcon = Path.Combine(AppDir, "Ntfy.png");
-
-    private static readonly string ConfigPath = Path.Combine(
+    private static readonly string ConfigDir = Path.Combine(
         Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
         "NtfyDesktop.NET");
 
@@ -26,9 +25,10 @@ public static class FileHelper
     /// <returns>Whether the dir exist before the call.</returns>
     public static bool CheckDirectory()
     {
-        if (!Directory.Exists(ConfigPath))
+        if (!Directory.Exists(ConfigDir)|| !Directory.Exists(LocalDir))
         {
-            Directory.CreateDirectory(ConfigPath);
+            Directory.CreateDirectory(ConfigDir);
+            Directory.CreateDirectory(LocalDir);
             return false;
         }
         else
@@ -40,7 +40,7 @@ public static class FileHelper
     public static async Task SaveTopic(NtfyTopic topic)
     {
         CheckDirectory();
-        await using StreamWriter writer = new(Path.Combine(ConfigPath, topic.Id + ".json"));
+        await using StreamWriter writer = new(Path.Combine(ConfigDir, topic.Id + ".json"));
         await writer.WriteAsync(JsonSerializer.Serialize(topic));
     }
 
@@ -48,7 +48,7 @@ public static class FileHelper
     {
         CheckDirectory();
         List<NtfyTopic> topics = [];
-        foreach (var file in Directory.GetFiles(ConfigPath))
+        foreach (var file in Directory.GetFiles(ConfigDir))
         {
             using StreamReader reader = new(file);
             var topic = JsonSerializer.Deserialize<NtfyTopic>(await reader.ReadToEndAsync());
@@ -66,7 +66,7 @@ public static class FileHelper
     public static void DeleteTopic(NtfyTopic topic)
     {
         CheckDirectory();
-        File.Delete(Path.Combine(ConfigPath, topic.Id + ".json"));
+        File.Delete(Path.Combine(ConfigDir, topic.Id + ".json"));
     }
 
     /// <summary>
@@ -76,7 +76,7 @@ public static class FileHelper
     public static void DeleteTopic(string id)
     {
         CheckDirectory();
-        File.Delete(Path.Combine(ConfigPath, id + ".json"));
+        File.Delete(Path.Combine(ConfigDir, id + ".json"));
     }
 
     public static void SaveImage(Bitmap image, string fileName)
