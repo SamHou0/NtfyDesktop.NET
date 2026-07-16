@@ -12,7 +12,6 @@
         Icon="/Assets/Ntfy.png"
         Title="NtfyDesktop.NET"
         Closing="Window_OnClosing"
-        Loaded="Control_OnLoaded"
         FontSize="20"
         Width="700" Height="500">
     <Window.Resources>
@@ -24,41 +23,49 @@
              to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
         <vm:MainWindowViewModel />
     </Design.DataContext>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
-            <ColumnDefinition Width="2*"></ColumnDefinition>
-        </Grid.ColumnDefinitions>
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
-        <ListBox Margin="5" CornerRadius="5" ItemsSource="{Binding Topics}"
-                 SelectedItem="{Binding SelectedTopic}"
-                 IsEnabled="{Binding !IsItemsEditing}">
-            <ListBox.ItemTemplate>
-                <DataTemplate x:DataType="vm:TopicViewModel">
-                    <controls:Badged BadgeContent="{avalonia:MaterialIconExt ExclamationBold}" 
-                                     IsBadgeVisible="{Binding !IsConnected}">
-                    <TextBlock Text="{Binding DisplayName}" Padding="17 0"
-                               Foreground="{Binding IsConnected, Converter={StaticResource BoolToBrush}}" />
-                    </controls:Badged>
-
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-        <GridSplitter Grid.Row="0" Grid.Column="1" Background="GreenYellow" Width="4" Opacity="0.2"></GridSplitter>
+    <Grid ColumnDefinitions="*,Auto,2*" RowDefinitions="*,Auto">
+        <ScrollViewer>
+            <Grid RowDefinitions="Auto,Auto,Auto">
+                <!-- Top banner -->
+                <controls:ColorZone Mode="PrimaryDark">
+                    <StackPanel Orientation="Horizontal">
+                        <Image Source="/Assets/Ntfy.png" Height="64" Margin="30 0 0 0"></Image>
+                        <TextBlock TextAlignment="Center" Margin="20" Foreground="AliceBlue" FontSize="40">ntfy</TextBlock>
+                    </StackPanel>
+                </controls:ColorZone>
+                <!-- List on the left -->
+                <ListBox Grid.Row="1" Margin="5" CornerRadius="5" ItemsSource="{Binding Topics}"
+                         SelectedItem="{Binding SelectedTopic}"
+                         IsEnabled="{Binding !IsItemsEditing}">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="vm:TopicViewModel">
+                            <Grid ColumnDefinitions="* Auto">
+                                <controls:Badged BadgeContent="{avalonia:MaterialIconExt ExclamationBold}"
+                                                 IsBadgeVisible="{Binding !IsConnected}">
+                                    <TextBlock Text="{Binding DisplayName}" Padding="0 0 17 0"
+                                               Foreground="{Binding IsConnected, Converter={StaticResource BoolToBrush}}" />
+                                </controls:Badged>
+                                <ToggleButton Grid.Column="1" Theme="{StaticResource MaterialIconToggleButton}"
+                                              Command="{Binding DeleteSelf}">
+                                    <avalonia:MaterialIcon Kind="Minus" />
+                                </ToggleButton>
+                            </Grid>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+                <Button Grid.Row="2" Grid.Column="0" Command="{Binding AddTopic}" HorizontalAlignment="Center"
+                        IsEnabled="{Binding !IsItemsEditing}" Margin="20 0"
+                        Theme="{StaticResource MaterialOutlineButton}">
+                    <Grid ColumnDefinitions="Auto Auto" VerticalAlignment="Center">
+                        <avalonia:MaterialIcon Kind="Add" Classes="Mini" Margin="0 0 10 0"></avalonia:MaterialIcon>
+                        <TextBlock Grid.Column="1" TextAlignment="Center">New Topic</TextBlock>
+                    </Grid>
+                </Button>
+            </Grid>
+        </ScrollViewer>
+        <GridSplitter Grid.Row="0" Grid.Column="1" Background="Black" Width="4" Opacity="0.2"></GridSplitter>
         <Grid Grid.Row="0" Grid.Column="2"
-              DataContext="{Binding SelectedTopic}" Margin="20 0">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="3*" />
-            </Grid.RowDefinitions>
+              DataContext="{Binding SelectedTopic}" Margin="20 0" RowDefinitions="*,*,*,*,*,3*">
             <TextBox Grid.Row="0" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding DisplayName}"
                      PlaceholderText="Enter a custom name here">
             </TextBox>
@@ -78,26 +85,10 @@
                 Status Message will show here.
             </TextBlock>
         </Grid>
-        <Grid Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0" HorizontalAlignment="Stretch"
-              VerticalAlignment="Stretch" Margin="20 20">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Command="{Binding AddTopic}" HorizontalAlignment="Center"
-                    IsEnabled="{Binding !IsItemsEditing}" Margin="20 0">
-                Add Topic
-            </Button>
-            <Button Grid.Column="1" Command="{Binding RemoveTopic}" HorizontalAlignment="Center"
-                    IsEnabled="{Binding !IsItemsEditing}" Margin="20 0">
-                Remove Topic
-            </Button>
-            <TextBlock Grid.Row="0" Grid.Column="2"
-                       Text="{Binding IsFirstRun,Converter={StaticResource FirstRunToMessage}}"
-                       HorizontalAlignment="Center"
-                       VerticalAlignment="Center" />
-        </Grid>
+        <TextBlock Grid.Row="1" Grid.ColumnSpan="3" Grid.Column="0"
+                   Text="{Binding IsFirstRun,Converter={StaticResource FirstRunToMessage}}"
+                   HorizontalAlignment="Center"
+                   VerticalAlignment="Center" />
 
     </Grid>
 

@@ -16,7 +16,8 @@ public partial class TopicViewModel : ViewModelBase
     private NtfyTopic? _topicNow;
     private NtfyWsService? _topicNowService;
     private CancellationTokenSource _retryCts = new();
-    public NtfyTopic? TopicNow => _topicNow;
+    // delete self and any config 
+    public event Action<TopicViewModel>? DeleteRequested;
 
     [ObservableProperty]
     // Uri already contains topic name.
@@ -36,22 +37,46 @@ public partial class TopicViewModel : ViewModelBase
     /// <summary>
     /// Default model. Generate fresh model.
     /// </summary>
-    public TopicViewModel()
+    public TopicViewModel(Action<TopicViewModel> deleteRequested)
     {
+        this.DeleteRequested = deleteRequested;
     }
 
     /// <summary>
     /// Create model and load topic. Best for reading from disk.
     /// </summary>
     /// <param name="topic"></param>
-    public TopicViewModel(NtfyTopic topic)
+    public TopicViewModel(NtfyTopic topic,Action<TopicViewModel> deleteRequested)
     {
         _topicNow = topic;
         this.Uri = topic.Uri.AbsoluteUri;
         this.DisplayName = topic.DisplayName;
         this.Token = topic.Token;
         this.Id = topic.Id;
+        this.DeleteRequested = deleteRequested;
         _ = SaveAndConnect();
+    }
+
+    [RelayCommand]
+    public async Task DeleteSelf()
+    {
+        // Process files.
+        try
+        {
+            if (_topicNow != null)
+                FileHelper.DeleteTopic(_topicNow);
+            else // When user save, but test failed.
+            {
+                FileHelper.DeleteTopic(Id);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("[Error] Failed to remove and delete topic file: " + ex);
+        }
+        await CancelAllOperations();
+        // Notify parent
+        DeleteRequested?.Invoke(this);
     }
 
     [RelayCommand]

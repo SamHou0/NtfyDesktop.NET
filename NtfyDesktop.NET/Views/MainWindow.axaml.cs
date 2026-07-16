@@ -11,11 +11,6 @@ namespace NtfyDesktop.NET.Views;
 
 public partial class MainWindow : Window
 {
-    /// <summary>
-    /// This describes whether a hidden request is in progress
-    /// Uses when initializing the window (Auto hide).
-    /// </summary>
-    private bool _isPendingHidden = false;
 
     public MainWindow()
     {
@@ -58,14 +53,6 @@ public partial class MainWindow : Window
         if (!e.IsProgrammatic)
         {
             e.Cancel = true;
-            Hide();
-        }
-    }
-
-    private void Control_OnLoaded(object? sender, RoutedEventArgs e)
-    {
-        if (_isPendingHidden)
-        {
             Hide();
         }
     }

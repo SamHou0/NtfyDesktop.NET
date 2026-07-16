@@ -9,7 +9,7 @@
     <TrayIcon.Icons>
         <TrayIcons>
             <TrayIcon Icon="/Assets/Ntfy.png"
-                      ToolTipText="NtfyDesktop.NET Running..."
+                      ToolTipText="NtfyDesktop.NET"
                       Clicked="Show_OnClick">
                 <TrayIcon.Menu>
                     <NativeMenu>
@@ -24,7 +24,7 @@
         <local:ViewLocator />
     </Application.DataTemplates>
     <Application.Styles>
-        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="LightGreen"/>
+        <themes:MaterialTheme BaseTheme="Dark" PrimaryColor="Teal"/>
         <avalonia:MaterialIconStyles />
     </Application.Styles>
 </Application>

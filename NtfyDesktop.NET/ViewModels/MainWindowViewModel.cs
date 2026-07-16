@@ -40,32 +40,16 @@ public partial class MainWindowViewModel : ViewModelBase
     [RelayCommand]
     public void AddTopic()
     {
-        TopicViewModel vm = new() { DisplayName = "New Topic" };
+        TopicViewModel vm = new(RemoveTopic) { DisplayName = "New Topic" };
         Topics.Add(vm);
     }
-
-    [RelayCommand]
-    public async Task RemoveTopic()
+    /// <summary>
+    /// Handles the topic removal.
+    /// </summary>
+    /// <param name="topic">The topic that requested the removal</param>
+    private void RemoveTopic(TopicViewModel topic)
     {
-        if (SelectedTopic != null)
-        {
-            try
-            {
-                if (SelectedTopic.TopicNow != null)
-                    FileHelper.DeleteTopic(SelectedTopic.TopicNow);
-                else // When user save, but test failed.
-                {
-                    FileHelper.DeleteTopic(SelectedTopic.Id);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("[Error] Failed to remove and delete topic file: " + ex);
-            }
-
-            await SelectedTopic.CancelAllOperations();
-            Topics.Remove(SelectedTopic);
-        }
+        Topics.Remove(topic);
     }
 
     private async Task ReadTopics()
@@ -73,7 +57,7 @@ public partial class MainWindowViewModel : ViewModelBase
         List<NtfyTopic> topics = await FileHelper.LoadTopics();
         foreach (var topic in topics)
         {
-            Topics.Add(new TopicViewModel(topic));
+            Topics.Add(new TopicViewModel(topic,RemoveTopic));
         }
     }
 

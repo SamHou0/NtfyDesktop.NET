@@ -58,7 +58,7 @@ public partial class App : Application
                 MainWindowViewModel vm = mainWindow?.DataContext as MainWindowViewModel ??
                                          throw new NullReferenceException();
                 await vm.CancelOperation();
-                mainWindow.Close();
+                mainWindow!.Close();
                 desktop.Shutdown();
             }
         }
