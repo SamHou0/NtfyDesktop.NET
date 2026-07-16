@@ -78,7 +78,7 @@
             </TextBox>
 
             <TextBox Grid.Row="3" TextAlignment="Center" VerticalAlignment="Center" Text="{Binding Token}"
-                     PlaceholderText="Enter you auth token">
+                     PlaceholderText="Enter your auth token">
             </TextBox>
             <TextBlock Grid.Row="4" Text="{Binding Id}" TextAlignment="Center" VerticalAlignment="Center">Id</TextBlock>
             <Button Grid.Row="5" HorizontalAlignment="Center" Command="{Binding ApplyEdit}"
