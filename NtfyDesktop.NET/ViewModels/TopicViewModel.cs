@@ -108,7 +108,9 @@ public partial class TopicViewModel : ViewModelBase
 
         // First cancel retry and old service!
         await CancelAllOperations();
-
+        // Generate a new token for new retry
+        _retryCts = new();
+        
         IsTestingConnection = true;
         _topicNow = new()
         {
