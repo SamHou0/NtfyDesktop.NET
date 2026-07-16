@@ -8,6 +8,7 @@ using System.Reflection.Metadata;
 using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using log4net;
 using NtfyDesktop.NET.Helper;
 using NtfyDesktop.NET.ViewModels;
 using NtfyDesktop.NET.Views;
@@ -16,6 +17,7 @@ namespace NtfyDesktop.NET;
 
 public partial class App : Application
 {
+    private static readonly ILog Log = LogManager.GetLogger(typeof(App));
     private MainWindow? _mainWindow;
 
     public override void Initialize()
@@ -64,7 +66,7 @@ public partial class App : Application
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[Error] Failed to disconnect window: " + ex);
+            Log.Error("Failed to disconnect window", ex);
             Environment.Exit(1);
         }
         // finally

@@ -6,12 +6,14 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
+using log4net;
 using NtfyDesktop.NET.Models;
 
 namespace NtfyDesktop.NET.Service;
 
 public partial class NtfyWsService : IDisposable
 {
+    private static readonly ILog Log = LogManager.GetLogger(typeof(NtfyWsService));
     private readonly ClientWebSocket _socket = new();
     public event Action<string>? OnMessageReceived;
     public event Func<Task>? OnConnectionError;
@@ -36,7 +38,7 @@ public partial class NtfyWsService : IDisposable
         _socket.Dispose();
         OnConnectionError = null;
         OnMessageReceived = null;
-        Console.WriteLine($"[INFO] Disposing {nameof(NtfyWsService)}");
+        Log.Info($"Disposing {nameof(NtfyWsService)}");
         GC.SuppressFinalize(this);
     }
 
@@ -47,12 +49,12 @@ public partial class NtfyWsService : IDisposable
     {
         try
         {
-            Console.WriteLine($"[INFO] Trying to connect to {_uri}");
+            Log.Info($"Trying to connect to {_uri}");
             await _socket.ConnectAsync(_uri, _cancellationTokenSource.Token);
         }
         catch (Exception exception)
         {
-            Console.WriteLine($"[ERROR] {nameof(ConnectAsync)} exception: {exception}");
+            Log.Error($"{nameof(ConnectAsync)} exception", exception);
             throw;
         }
     }
@@ -63,12 +65,12 @@ public partial class NtfyWsService : IDisposable
     /// </summary>
     public async Task StartReceivingAsync()
     {
-        Console.WriteLine($"[INFO] Start Receiving message from {_uri}");
+        Log.Info($"Start Receiving message from {_uri}");
         try
         {
             while (_socket.State == WebSocketState.Open)
             {
-                Console.WriteLine($"[INFO] Receiving message from {_uri}");
+                Log.Info($"Receiving message from {_uri}");
                 WebSocketReceiveResult result;
                 var ms = new MemoryStream();
                 do
@@ -79,20 +81,20 @@ public partial class NtfyWsService : IDisposable
                 } while (!result.EndOfMessage);
 
                 string message = Encoding.UTF8.GetString(ms.ToArray());
-                Console.WriteLine($"[Debug] {nameof(StartReceivingAsync)} received: {message}");
+                Log.Debug($"{nameof(StartReceivingAsync)} received: {message}");
                 OnMessageReceived?.Invoke(message);
             }
         }
         catch (OperationCanceledException)
         {
-            Console.WriteLine($"[INFO] {nameof(StartReceivingAsync)} cancelled");
+            Log.Info($"{nameof(StartReceivingAsync)} cancelled");
             // Necessary. Network error may cause cancel.
             // User Cancellation show first remove error handler. 
             OnConnectionError?.Invoke();
         }
         catch (Exception exception)
         {
-            Console.WriteLine($"[ERROR] {nameof(StartReceivingAsync)} exception: {exception}");
+            Log.Error($"{nameof(StartReceivingAsync)} exception", exception);
             OnConnectionError?.Invoke();
         }
     }
@@ -102,7 +104,7 @@ public partial class NtfyWsService : IDisposable
     /// </summary>
     public async Task CancelReceivingAsync()
     {
-        Console.WriteLine($"[INFO] Cancel Receiving from {_uri}");
+        Log.Info($"Cancel Receiving from {_uri}");
         OnConnectionError = null;
         OnMessageReceived = null;
         await _cancellationTokenSource.CancelAsync();
@@ -114,7 +116,7 @@ public partial class NtfyWsService : IDisposable
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"[ERROR] Closing websocket: {ex.Message}");
+                Log.Error($"Closing websocket: {ex.Message}");
             }
         }
         _socket.Dispose();

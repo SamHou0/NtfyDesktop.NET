@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using log4net;
 using NtfyDesktop.NET.Helper;
 using NtfyDesktop.NET.Models;
 using NtfyDesktop.NET.Service;
@@ -13,6 +14,7 @@ namespace NtfyDesktop.NET.ViewModels;
 
 public partial class TopicViewModel : ViewModelBase
 {
+    private static readonly ILog Log = LogManager.GetLogger(typeof(TopicViewModel));
     private NtfyTopic? _topicNow;
     private NtfyWsService? _topicNowService;
 
@@ -86,7 +88,7 @@ public partial class TopicViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[Error] Failed to remove and delete topic file: " + ex);
+            Log.Error("Failed to remove and delete topic file", ex);
         }
 
         await CancelAllOperations();
@@ -172,13 +174,13 @@ public partial class TopicViewModel : ViewModelBase
         {
             try
             {
-                Console.WriteLine($"[Info] {_topicNow?.DisplayName} disconnecting...");
+                Log.Info($"{_topicNow?.DisplayName} disconnecting...");
                 await _topicNowService.CancelReceivingAsync()!;
                 _topicNowService.Dispose();
             }
             catch (Exception ex)
             {
-                Console.Write("[ERROR] Error canceling websocket: " + ex.Message);
+                Log.Error("Error canceling websocket", ex);
             }
 
             _topicNowService = null;
@@ -197,7 +199,7 @@ public partial class TopicViewModel : ViewModelBase
 
     private async Task NtfyWsServiceOnConnectionError()
     {
-        Console.WriteLine($"[Info] {_topicNow?.DisplayName} Connection Failed. Wait 5 seconds and reconnect...");
+        Log.Info($"{_topicNow?.DisplayName} Connection Failed. Wait 5 seconds and reconnect...");
         IsConnected = false;
         uint retryTimes = 0;
         do
@@ -209,7 +211,7 @@ public partial class TopicViewModel : ViewModelBase
             }
             catch (OperationCanceledException)
             {
-                Console.WriteLine($"[Info] {_topicNow?.DisplayName} Reconnecting Cancelled...");
+                Log.Info($"{_topicNow?.DisplayName} Reconnecting Cancelled...");
                 return;
             }
 
@@ -218,13 +220,12 @@ public partial class TopicViewModel : ViewModelBase
                 await ResetWsService();
                 StatusMessage = $"Reconnecting...";
                 await _topicNowService!.ConnectAsync();
-                Console.WriteLine($"[Info] {_topicNow?.DisplayName} Reconnect Success!");
+                Log.Info($"{_topicNow?.DisplayName} Reconnect Success!");
                 _ = _topicNowService.StartReceivingAsync();
             }
             catch
             {
-                Console.WriteLine(
-                    $"[Error] Still cannot connect. Wait for next retry {retryTimes + 1}.");
+                Log.Error($"Still cannot connect. Wait for next retry {retryTimes + 1}.");
             }
             finally
             {
@@ -251,8 +252,7 @@ public partial class TopicViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[ERROR] Failed to process message: " + ex.Message);
-            Console.WriteLine(ex);
+            Log.Error("Failed to process message", ex);
         }
     }
 }

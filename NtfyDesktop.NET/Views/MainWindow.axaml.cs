@@ -4,6 +4,7 @@ using Avalonia.Interactivity;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using CommunityToolkit.Mvvm.Messaging;
+using log4net;
 using NtfyDesktop.NET.Helper;
 using NtfyDesktop.NET.Message;
 
@@ -11,7 +12,7 @@ namespace NtfyDesktop.NET.Views;
 
 public partial class MainWindow : Window
 {
-
+    private static readonly ILog Log = LogManager.GetLogger(typeof(MainWindow));
     public MainWindow()
     {
         WeakReferenceMessenger.Default.Register<ChangeWindowStatusMessage>(this,
@@ -44,7 +45,7 @@ public partial class MainWindow : Window
         }
         catch (Exception ex)
         {
-            Console.WriteLine("[Warning] Failed to extract icon Ntfy.png. " + ex.Message);
+            Log.Warn("Failed to extract icon Ntfy.png. " + ex.Message);
         }
     }
 
