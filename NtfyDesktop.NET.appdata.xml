@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+	<id>NtfyDesktop.NET</id>
+	<metadata_license>CC-BY-NC-SA-4.0</metadata_license>
+	<project_license>GPL-3.0</project_license>
+	<name>NtfyDesktop.NET</name>
+	<summary>Yet another ntfy desktop client</summary>
+	<description>
+		<p>A ntfy desktop client, built with .NET and Avalonia.</p>
+	</description>
+	<launchable type="desktop-id">NtfyDesktop.NET.desktop</launchable>
+	<url type="homepage">https://github.com/SamHou0/NtfyDesktop.NET</url>
+	<screenshots>
+		<screenshot type="default">
+			<image>https://img.samhou.top/1784204957030.webp</image>
+		</screenshot>
+	</screenshots>
+	<provides>
+		<id>NtfyDesktop.NET.desktop</id>
+	</provides>
+</component>

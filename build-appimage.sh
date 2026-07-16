@@ -12,6 +12,7 @@ mkdir -p AppDir/usr/share/icons/hicolor/256x256/apps
 dotnet publish -o AppDir/usr/bin -c Release NtfyDesktop.NET/NtfyDesktop.NET.csproj
 
 cp NtfyDesktop.NET.desktop AppDir/usr/share/applications/
+cp NtfyDesktop.NET.appdata.xml AppDir/usr/share/metainfo/NtfyDesktop.NET.appdata.xml
 
 cp NtfyDesktop.NET/Assets/Ntfy.png AppDir/usr/share/icons/hicolor/256x256/apps/NtfyDesktop.NET.png
 
