@@ -41,12 +41,18 @@ public partial class MainWindowViewModel : ViewModelBase
     public void AddTopic()
     {
         TopicViewModel vm = new(RemoveTopic)
+
         {
             DisplayName = "New Topic",
-            
         };
+        if (SelectedTopic != null)
+        {
+            vm.BaseUri = SelectedTopic.BaseUri;
+            vm.Token = SelectedTopic.Token;
+        }
         Topics.Add(vm);
     }
+
     /// <summary>
     /// Handles the topic removal.
     /// </summary>
@@ -61,7 +67,7 @@ public partial class MainWindowViewModel : ViewModelBase
         List<NtfyTopic> topics = await FileHelper.LoadTopics();
         foreach (var topic in topics)
         {
-            Topics.Add(new TopicViewModel(topic,RemoveTopic));
+            Topics.Add(new TopicViewModel(topic, RemoveTopic));
         }
     }
 
