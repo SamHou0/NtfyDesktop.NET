@@ -51,6 +51,13 @@ public partial class MainWindow : Window
 
     private void Window_OnClosing(object? sender, WindowClosingEventArgs e)
     {
+        if (e.CloseReason is WindowCloseReason.ApplicationShutdown
+            or WindowCloseReason.OSShutdown)
+        {
+            // Allow the window to close during app/OS shutdown (logout/restart/power-off).
+            return;
+        }
+
         if (!e.IsProgrammatic)
         {
             e.Cancel = true;
